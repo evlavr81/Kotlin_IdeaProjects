@@ -1,0 +1,379 @@
+type: edu
+custom_name: First move!
+files:
+- name: src/tictactoe/Main.kt
+  visible: true
+  text: "package tictactoe\n\nfun main() {\n    val fSize: Int = 3 //field size\n\
+    \    val fList = mutableListOf<MutableList<Char>> () // 2d field list\n\n    /*\n\
+    \    fun drawFieldStr(input: String){\n        println(\"---------\")\n      \
+    \  for (i in 0..6 step fieldSize){\n            print(\"| \")\n            for\
+    \ (j in 0..fieldSize - 1){\n                print(\"${input[i+j]} \")\n      \
+    \      }\n            println(\"|\")\n        }\n        println(\"---------\"\
+    )\n    }\n    */\n\n    fun fillFieldList(input: String) {\n        // output\
+    \ fill 2d list field\n        for (i in 0..2 * fSize step fSize) {\n         \
+    \   val fieldLine = mutableListOf<Char>()\n            for (j in 0 until fSize)\
+    \ { //0..3,3..6,6..9\n                fieldLine.add(input[j+i])\n            \
+    \    // println(j+i)\n            }\n            // println(fieldLine)\n     \
+    \       fList.add(fieldLine)\n        }\n    }\n\n    fun drawFieldList(fList:\
+    \ MutableList<MutableList<Char>>){\n        // output fill 2d list field\n   \
+    \     println(\"---------\")\n        for (i in 0 until fSize){\n            print(\"\
+    | \")\n            for (j in 0 until fSize){\n                print(\"${fList[i][j]}\
+    \ \")\n            }\n            println(\"|\")\n        }\n        println(\"\
+    ---------\")\n    }\n\n    fun isThreeInARow(fList: MutableList<MutableList<Char>>,\
+    \ symbol: Char): Boolean{\n        var isThreeInARow = false\n        var countSymbol\
+    \ = 0\n        if (symbol == 'X' || symbol == 'O') {\n            // Start horizontal\
+    \ check\n            // println(\"********  Start horizontal check *********\"\
+    )\n            for (i in 0 until fSize) {\n                for (j in 0 until fSize)\
+    \ {\n                    if (fList[i][j] == symbol) countSymbol++\n          \
+    \          if (countSymbol == 3) isThreeInARow = true\n                    //\
+    \ print(\"[$i][$j]: count$symbol=$countSymbol | \")\n                }\n     \
+    \           countSymbol = 0\n                // println()\n            }\n   \
+    \         // End horizontal check\n            // Start vertical check\n     \
+    \       // println(\"********  Start vertical check *********\")\n           \
+    \ for (i in 0 until fSize) {\n                for (j in 0 until fSize) {\n   \
+    \                 if (fList[j][i] == symbol) countSymbol++\n                 \
+    \   if (countSymbol == 3) isThreeInARow = true\n                    // print(\"\
+    [$j][$i]: count$symbol=$countSymbol | \")\n                }\n               \
+    \ countSymbol = 0\n                // println()\n            }\n            //\
+    \ End vertical check\n            // Start diagonal check\n            // Direct\
+    \ search\n            // println(\"********  Start diagonal direct search *********\"\
+    )\n            for (i in 0 until fSize) {\n                if (fList[i][i] ==\
+    \ symbol) countSymbol++\n                if (countSymbol == 3) isThreeInARow =\
+    \ true\n                // print(\"[$i][$i]: count$symbol=$countSymbol | \")\n\
+    \            }\n            countSymbol = 0\n            // println()\n      \
+    \      // Reverse search\n            // println(\"********  Start diagonal REVERSE\
+    \ search *********\")\n            for (i in 0 until fSize) {\n              \
+    \  if (fList[Math.abs(fSize - 1 - i)][i] == symbol) countSymbol++\n          \
+    \      if (countSymbol == 3) isThreeInARow = true\n                // print(\"\
+    [${Math.abs(fSize - 1 - i)}][$i]: count$symbol=$countSymbol | \")\n          \
+    \  }\n            countSymbol = 0\n            // println()\n            // End\
+    \ diagonal check\n        }\n        return isThreeInARow // Return result\n \
+    \   }\n    \n    fun hasEmptyCells(fList: MutableList<MutableList<Char>>): Boolean{\n\
+    \        var hasEmptyCells = false\n            for (i in 0 until fSize) {\n \
+    \               for (j in 0 until fSize) {\n                    if (fList[i][j]\
+    \ == '_' || fList[i][j] == ' ') hasEmptyCells = true\n                }\n    \
+    \        }\n        return hasEmptyCells // Return result\n    }\n\n    fun isDifferenceTwoOrMore(fList:\
+    \ MutableList<MutableList<Char>>): Boolean{\n        var isDifferenceTwoOrMore\
+    \ = false\n        var countX = 0\n        var countO = 0\n        for (i in 0\
+    \ until fSize) {\n            for (j in 0 until fSize) {\n                if (fList[i][j]\
+    \ == 'X') countX++\n                // print(\"[$i][$j] countX= $countX | \")\n\
+    \                if (fList[i][j] == 'O') countO++\n                // println(\"\
+    [$i][$j] countO= $countO | \")\n            }\n        }\n        if (Math.abs(countX\
+    \ - countO) >= 2) isDifferenceTwoOrMore = true\n        // println(\"Abs(X-O)=\
+    \ ${Math.abs(countX - countO)} | \")\n        return isDifferenceTwoOrMore //\
+    \ Return result\n    }\n\n    fun analyzeGameState(fList: MutableList<MutableList<Char>>){\n\
+    \        if (isThreeInARow(fList, 'X') && isThreeInARow(fList, 'O')\n        \
+    \    || isDifferenceTwoOrMore(fList)) {\n            // when the grid has three\
+    \ X’s in a row as well as three O’s in a row,\n            // or there are a lot\
+    \ more X's than O's or vice versa\n            // (the difference should be 1\
+    \ or 0;\n            // if the difference is 2 or more,\n            // then the\
+    \ game state is impossible).\n            // println(\"X-row: ${ isThreeInARow(fList,\
+    \ 'X') }\")\n            // println(\"O-row: ${ isThreeInARow(fList, 'O') }\"\
+    )\n            // println(\"Diff >= 2: ${ isDifferenceTwoOrMore(fList) }\")\n\
+    \            println(\"Impossible\")\n        } else if(isThreeInARow(fList, 'X')){\n\
+    \            // when the grid has three X’s in a row.\n            println(\"\
+    X wins\")\n        } else if(isThreeInARow(fList, 'O')){\n            // when\
+    \ the grid has three O’s in a row.\n            println(\"O wins\")\n        }\
+    \ else if(!isThreeInARow(fList, 'X') && !isThreeInARow(fList, 'O')\n         \
+    \   && !hasEmptyCells(fList)){\n            // when no side has a three in a row\n\
+    \            // and the grid has no empty cells.\n            println(\"Draw\"\
+    )\n        } else if (!isThreeInARow(fList, 'X') && !isThreeInARow(fList, 'O')\n\
+    \            && hasEmptyCells(fList)){\n            // when neither side has three\
+    \ in a row\n            // but the grid still has empty cells.\n            println(\"\
+    Game not finished\")\n        } else {\n            println(\"Some unexpected\
+    \ event happened!!!\")\n        }\n    }\n\n    print(\"Enter cells: \")\n   \
+    \ var input: String = readln()\n    // drawFieldStr(input)\n    fillFieldList(input)\n\
+    \    // println(fieldList)\n    // println(fieldList.size)\n    drawFieldList(fList)\n\
+    \    // println(\"Diff >= 2: ${ isDifferenceTwoOrMore(fList) }\")\n    analyzeGameState(fList)\n\
+    \    // println(\"Tree X in row: \" + isThreeInARow(fList, 'X'))\n    // println(\"\
+    Tree O in row: \" + isThreeInARow(fList, 'O'))\n\n}"
+  learner_created: false
+- name: test/TicTacToeTest.java
+  visible: false
+  text: |
+    import org.hyperskill.hstest.exception.outcomes.WrongAnswer;
+    import org.hyperskill.hstest.stage.StageTest;
+    import org.hyperskill.hstest.testcase.CheckResult;
+    import org.hyperskill.hstest.testcase.TestCase;
+
+    import java.util.ArrayList;
+    import java.util.List;
+    import java.util.stream.Collectors;
+
+    enum FieldState {
+        X, O, FREE;
+
+        static FieldState get(char symbol) {
+            switch (symbol) {
+                case 'X': return X;
+                case 'O': return O;
+                case ' ':
+                case '_':
+                    return FREE;
+                default: return null;
+            }
+        }
+    }
+
+    class TicTacToeField {
+
+        final FieldState[][] field;
+
+        TicTacToeField(FieldState[][] field) {
+            this.field = new FieldState[3][3];
+            for (int row = 0; row < 3; row++) {
+                System.arraycopy(field[row], 0, this.field[row], 0, 3);
+            }
+        }
+
+        TicTacToeField(String str) {
+            field = new FieldState[3][3];
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    field[row][col] = FieldState.get(str.charAt(row * 3 + col));
+                }
+            }
+        }
+
+        boolean equalTo(TicTacToeField other) {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (field[i][j] != other.field[i][j]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        boolean hasNextAs(TicTacToeField other) {
+            boolean improved = false;
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (field[i][j] != other.field[i][j]) {
+                        if (field[i][j] == FieldState.FREE && !improved) {
+                            improved = true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return improved;
+        }
+
+        boolean isCloseTo(TicTacToeField other) {
+            return equalTo(other)
+                || hasNextAs(other)
+                || other.hasNextAs(this);
+        }
+
+        static TicTacToeField parse(String fieldStr) {
+
+            try {
+                List<String> lines = fieldStr
+                    .lines()
+                    .map(String::strip)
+                    .filter(e ->
+                        e.startsWith("|")
+                            && e.endsWith("|"))
+                    .collect(Collectors.toList());
+
+                for (String line : lines) {
+                    if (line.length() != 9) {
+                        throw new WrongAnswer("Line of Tic-Tac-Toe " +
+                            "field should be 9 characters long\n" +
+                            "found " + line.length() + " characters in \"" + line + "\"");
+                    }
+                    for (char c : line.toCharArray()) {
+                        if (c != 'X'
+                            && c != 'O'
+                            && c != '|'
+                            && c != ' '
+                            && c != '_') {
+                            return null;
+                        }
+                    }
+                }
+
+                FieldState[][] field = new FieldState[3][3];
+
+                int y = 0;
+                for (String line : lines) {
+                    char[] cols = new char[] {
+                        line.charAt(2),
+                        line.charAt(4),
+                        line.charAt(6)
+                    };
+
+                    int x = 0;
+                    for (char c : cols) {
+                        FieldState state = FieldState.get(c);
+                        if (state == null) {
+                            return null;
+                        }
+                        field[y][x] = state;
+                        x++;
+                    }
+                    y++;
+                }
+
+                return new TicTacToeField(field);
+            } catch (Exception ex) {
+                return null;
+            }
+        }
+
+
+        static List<TicTacToeField> parseAll(String output) {
+            List<TicTacToeField> fields = new ArrayList<>();
+
+            List<String> lines = output
+                .lines()
+                .map(String::strip)
+                .filter(e -> e.length() > 0)
+                .collect(Collectors.toList());
+
+            String candidateField = "";
+            boolean insideField = false;
+            for (String line : lines) {
+                if (line.contains("----") && !insideField) {
+                    insideField = true;
+                    candidateField = "";
+                } else if (line.contains("----") && insideField) {
+                    TicTacToeField field = TicTacToeField.parse(candidateField);
+                    if (field != null) {
+                        fields.add(field);
+                    }
+                    insideField = false;
+                }
+
+                if (insideField && line.startsWith("|")) {
+                    candidateField += line + "\n";
+                }
+            }
+
+            return fields;
+        }
+
+    }
+
+
+    class Clue {
+        int x, y;
+        String input;
+        Clue(String input, int x, int y) {
+            this.input = input;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public class TicTacToeTest extends StageTest<Clue> {
+
+        static final String[] inputs = new String[] {
+            "1 1", "1 2", "1 3",
+            "2 1", "2 2", "2 3",
+            "3 1", "3 2", "3 3"
+        };
+
+        String iterateCells(String initial) {
+            int index = -1;
+            for (int i = 0; i < inputs.length; i++) {
+                if (initial.equals(inputs[i])) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1) {
+                return "";
+            }
+            String fullInput = "";
+            for (int i = index; i < index + 9; i++) {
+                fullInput += inputs[i % inputs.length] + "\n";
+            }
+            return fullInput;
+        }
+
+        @Override
+        public List<TestCase<Clue>> generate() {
+
+            List<TestCase<Clue>> tests = new ArrayList<>();
+
+            int i = 0;
+
+            for (String startField : new String[] {
+                "_XXOO_OX_",
+                "_________",
+                "X_X_O____"
+            }) {
+
+                for (String input : inputs) {
+                    String fullInput = iterateCells(input);
+
+                    String[] strNums = input.split("\\s+");
+                    int x = Integer.parseInt(strNums[0]);
+                    int y = Integer.parseInt(strNums[1]);
+
+                    if (i % 2 == 1) {
+                        // mix with incorrect data
+                        fullInput = "4 " + i + "\n" + fullInput;
+                    }
+
+                    tests.add(new TestCase<Clue>()
+                        .setInput(startField + "\n" + fullInput)
+                        .setAttach(new Clue(startField, x, y)));
+
+                    i++;
+                }
+
+            }
+
+            return tests;
+        }
+
+        @Override
+        public CheckResult check(String reply, Clue clue) {
+
+            List<TicTacToeField> fields = TicTacToeField.parseAll(reply);
+
+            if (fields.size() != 2) {
+                return new CheckResult(false,
+                    "Can't find two fields inside output");
+            }
+
+            TicTacToeField curr = fields.get(0);
+            TicTacToeField next = fields.get(1);
+
+            TicTacToeField correctCurr = new TicTacToeField(clue.input);
+            TicTacToeField correctNext = new TicTacToeField(correctCurr.field);
+
+            String[] numInputs = iterateCells(clue.x + " " + clue.y).split("\n");
+            for (String input : numInputs) {
+                String[] strNums = input.split(" ");
+                int x = Integer.parseInt(strNums[0]);
+                int y = Integer.parseInt(strNums[1]);
+                if (correctNext.field[x - 1][y - 1] == FieldState.FREE) {
+                    correctNext.field[x - 1][y - 1] = FieldState.X;
+                    break;
+                }
+            }
+
+            if (!curr.equalTo(correctCurr)) {
+                return new CheckResult(false,
+                    "The first field is not equal to the input field");
+            }
+
+            if (!next.equalTo(correctNext)) {
+                return new CheckResult(false,
+                    "The first field is correct, but the second is not");
+            }
+
+            return CheckResult.correct();
+        }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/10478#comment
+status: Solved
+record: 4
